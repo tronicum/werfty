@@ -1,0 +1,36 @@
+version: '2'
+
+# docker run -it -d --name shipyard-rethinkdb rethinkdb:latest
+
+services:
+ rethinkdb:
+    container_name: 'shipyard-rethinkdb'
+    image: rethinkdb:latest
+    expose:
+      - "8080"
+      - "28015"
+      - "29015"
+#environment:
+#      - "constraint:node==node1" if you run classic swarm, you need a unique host here 
+    volumes:
+      - "rethinkdb:/data"
+
+#docker run -dti -e constraint:node==node1   -v  /etc/docker:/etc/docker:ro   --restart=always --name shipyard-controller --link shipyard-rethinkdb:rethinkdb  -p 8080:8080 shipyard/shipyard:latest -D server -d tcp://10.231.3.11:3376 --tls-ca-cert /etc/docker/ca.pem --tls-cert /etc/docker/server.pem --tls-key /etc/docker/server-key.pem
+ shipyard:
+    container_name: 'shipyard-controller'
+    image: shipyard/shipyard:latest
+    depends_on:
+      - rethinkdb
+    ports:
+      - "8080:8080"
+    environment:
+      - "constraint:node==node1"
+ #     - "http_proxy=http://proxy.cornelsen.de:80"  # if you have a proxy, put it here
+ #     - "https_proxy=http://proxy.cornelsen.de:80" # same for https URIs
+ #     - "no_proxy=127.0.0.1,localhost,10.your.ips" # note that no_proxy dos only support subdomains or specific ips, not networks
+    volumes:
+      - /etc/docker:/etc/docker:ro
+    command: "-D server -d tcp://<your docker-ip>:<your docker port> --tls-ca-cert /etc/docker/ca.pem --tls-cert /etc/docker/server.pem --tls-key /etc/docker/server-key.pem"
+
+volumes:
+   rethinkdb:
