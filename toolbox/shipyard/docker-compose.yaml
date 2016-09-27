@@ -2,6 +2,8 @@ version: '2'
 
 # docker run -it -d --name shipyard-rethinkdb rethinkdb:latest
 
+# You MUST change the <your-*> stuff!
+
 services:
  rethinkdb:
     container_name: 'shipyard-rethinkdb'
@@ -15,7 +17,7 @@ services:
     volumes:
       - "rethinkdb:/data"
 
-#docker run -dti -e constraint:node==node1   -v  /etc/docker:/etc/docker:ro   --restart=always --name shipyard-controller --link shipyard-rethinkdb:rethinkdb  -p 8080:8080 shipyard/shipyard:latest -D server -d tcp://10.231.3.11:3376 --tls-ca-cert /etc/docker/ca.pem --tls-cert /etc/docker/server.pem --tls-key /etc/docker/server-key.pem
+#docker run -dti -e constraint:node==node1   -v  /etc/docker:/etc/docker:ro   --restart=always --name shipyard-controller --link shipyard-rethinkdb:rethinkdb  -p 8080:8080 shipyard/shipyard:latest -D server -d <your docker-ip>:<your docker port> --tls-ca-cert /etc/docker/ca.pem --tls-cert /etc/docker/server.pem --tls-key /etc/docker/server-key.pem
  shipyard:
     container_name: 'shipyard-controller'
     image: shipyard/shipyard:latest
